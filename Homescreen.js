@@ -1,29 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Homescreen({ navigation, cart, setCart }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [items, setItems] = useState([
-    { id: 1, source: require('./assets/dress-1.png'), title: 'OFFICE WEAR', description: 'Reversible Angora Cardigan', price: '$120' },
-    { id: 2, source: require('./assets/dress-2.png'), title: 'BLACK', description: 'Reversible Angora Cardigan', price: '$125' },
-    { id: 3, source: require('./assets/dress-3.png'), title: 'CHURCH WEAR', description: 'Reversible Angora Cardigan', price: '$130' },
-    { id: 4, source: require('./assets/dress-4.png'), title: 'LAMEREI', description: 'Reversible Angora Cardigan', price: '$138' },
-    { id: 5, source: require('./assets/dress-5.png'), title: '21WN', description: 'Reversible Angora Cardigan', price: '$140' },
-    { id: 6, source: require('./assets/dress-6.png'), title: 'LOPO', description: 'Reversible Angora Cardigan', price: '$155' },
-    { id: 7, source: require('./assets/dress-7.png'), title: '21WN', description: 'Reversible Angora Cardigan', price: '$125' },
-    { id: 8, source: require('./assets/sundress.jpg'), title: 'SUNDRESS', description: 'Reversible Angora Cardigan', price: '$145' },
-  ]);
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('https://fakestoreapi.com/products');
+        const data = await response.json();
+        setItems(data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
     const loadCart = async () => {
       try {
         const savedCart = await AsyncStorage.getItem('cart');
         if (savedCart) {
           setCart(JSON.parse(savedCart));
+        } else {
+          setCart([]);
         }
       } catch (error) {
-        console.log('Error loading cart', error);
+        console.error('Error loading cart', error);
       }
     };
 
@@ -34,24 +37,25 @@ export default function Homescreen({ navigation, cart, setCart }) {
           setSearchQuery(savedSearchQuery);
         }
       } catch (error) {
-        console.log('Error loading search query', error);
+        console.error('Error loading search query', error);
       }
     };
 
+    fetchProducts();
     loadCart();
     loadSearchQuery();
-  }, []);
+  }, [setCart]);
 
   useEffect(() => {
     const saveCart = async () => {
       try {
         await AsyncStorage.setItem('cart', JSON.stringify(cart));
       } catch (error) {
-        console.log('Error saving cart', error);
+        console.error('Error saving cart', error);
       }
     };
 
-    saveCart();
+    if (cart && cart.length > 0) saveCart();
   }, [cart]);
 
   useEffect(() => {
@@ -59,7 +63,7 @@ export default function Homescreen({ navigation, cart, setCart }) {
       try {
         await AsyncStorage.setItem('searchQuery', searchQuery);
       } catch (error) {
-        console.log('Error saving search query', error);
+        console.error('Error saving search query', error);
       }
     };
 
@@ -67,15 +71,15 @@ export default function Homescreen({ navigation, cart, setCart }) {
   }, [searchQuery]);
 
   const addToCart = (item) => {
-    setCart([...cart, item]);
-    alert(`${item.title} added to cart!`);
+    setCart((prevCart) => [...prevCart, item]);
+    Alert.alert(`${item.title} added to cart!`);
   };
 
   const handleSearchChange = (query) => {
     setSearchQuery(query);
   };
 
-  const filteredItems = items.filter(item =>
+  const filteredItems = items.filter((item) =>
     item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     item.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -103,17 +107,18 @@ export default function Homescreen({ navigation, cart, setCart }) {
       </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.itemsContainer}>
-          {filteredItems.map(item => (
-            <TouchableOpacity key={item.id} onPress={() => navigation.navigate('ProductDetail', { item })}>
-              <View style={styles.itemContainer}>
-                <Image source={item.source} style={styles.dress} />
-                <Text style={styles.itemTitle}>{item.title}</Text>
-                <Text style={styles.itemDescription}>{item.description}</Text>
-                <Text style={styles.itemPrice}>{item.price}</Text>
-                <TouchableOpacity style={styles.addButton} onPress={() => addToCart(item)}>
-                  <Text style={styles.addButtonText}>+</Text>
-                </TouchableOpacity>
-              </View>
+          {filteredItems.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.itemContainer}
+              onPress={() => navigation.navigate('ProductDetail', { item })}
+            >
+              <Image source={{ uri: item.image }} style={styles.dress} />
+              <Text style={styles.itemTitle}>{item.title}</Text>
+              <Text style={styles.itemPrice}>${item.price}</Text>
+              <TouchableOpacity style={styles.addButton} onPress={() => addToCart(item)}>
+                <Text style={styles.addButtonText}>+</Text>
+              </TouchableOpacity>
             </TouchableOpacity>
           ))}
         </View>
@@ -144,72 +149,74 @@ const styles = StyleSheet.create({
     height: 50,
     margin: 5,
     marginRight: 35,
+    marginLeft: 35,
+  },
+  searchInput: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    flex: 1,
+    marginLeft: 15,
+    marginRight: 15,
   },
   picture: {
     width: 30,
     height: 30,
-    margin: 5,
-    marginRight: 20,
+    marginLeft: 35,
+    marginRight: 35,
   },
   text: {
-    fontSize: 24,
-    fontFamily: 'serif',
-  },
-  searchInput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    paddingLeft: 10,
-    marginLeft: 10,
-    flex: 1,
+    fontSize: 25,
+    fontWeight: 'bold',
+    marginRight: 20,
+    marginLeft: 15,
   },
   scrollContainer: {
-    paddingBottom: 20,
+    alignItems: 'center',
   },
   itemsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
+    marginTop: 20,
   },
   itemContainer: {
     width: '45%',
-    margin: 10,
-    backgroundColor: '#f8f8f8',
-    borderRadius: 10,
-    padding: 10,
     alignItems: 'center',
+    marginBottom: 20,
+    position: 'relative',
   },
   dress: {
     width: '100%',
-    height: 150,
-    borderRadius: 10,
+    height: 250,
+    resizeMode: 'cover',
   },
   itemTitle: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
     marginTop: 10,
-    textAlign: 'center',
-  },
-  itemDescription: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
-    marginVertical: 5,
   },
   itemPrice: {
     fontSize: 16,
-    color: '#333',
-    marginVertical: 5,
+    marginTop: 5,
+    fontWeight: 'bold',
   },
   addButton: {
+    position: 'absolute',
+    right: 10,
+    bottom: 10,
     backgroundColor: '#000',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 10,
+    borderRadius: 20,
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   addButtonText: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 20,
   },
 });
+
