@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Sidebar from './Sidebar'; // Import your Sidebar component
 
 export default function Homescreen({ navigation, cart, setCart }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState([]);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -86,43 +88,48 @@ export default function Homescreen({ navigation, cart, setCart }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image source={require('./assets/Menu.png')} style={styles.icon} />
-        <Image source={require('./assets/Logo.png')} />
-        <Image source={require('./assets/Search.png')} style={styles.icon} />
-        <TouchableOpacity onPress={() => navigation.navigate('Cart', { cart, setCart })}>
-          <Image source={require('./assets/shoppingBag.png')} style={styles.icon} />
-        </TouchableOpacity>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search"
-          value={searchQuery}
-          onChangeText={handleSearchChange}
-        />
-      </View>
-      <View style={styles.storyContainer}>
-        <Text style={styles.text}>OUR STORY</Text>
-        <Image source={require('./assets/Filter.png')} style={styles.picture} />
-        <Image source={require('./assets/Listview.png')} style={styles.picture} />
-      </View>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.itemsContainer}>
-          {filteredItems.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.itemContainer}
-              onPress={() => navigation.navigate('ProductDetail', { item })}
-            >
-              <Image source={{ uri: item.image }} style={styles.dress} />
-              <Text style={styles.itemTitle}>{item.title}</Text>
-              <Text style={styles.itemPrice}>${item.price}</Text>
-              <TouchableOpacity style={styles.addButton} onPress={() => addToCart(item)}>
-                <Text style={styles.addButtonText}>+</Text>
-              </TouchableOpacity>
-            </TouchableOpacity>
-          ))}
+      {showSidebar && <Sidebar navigation={navigation} />}
+      <View style={styles.mainContainer}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => setShowSidebar(!showSidebar)}>
+            <Image source={require('./assets/Menu.png')} style={styles.icon} />
+          </TouchableOpacity>
+          <Image source={require('./assets/Logo.png')} />
+          <Image source={require('./assets/Search.png')} style={styles.icon} />
+          <TouchableOpacity onPress={() => navigation.navigate('Cart', { cart, setCart })}>
+            <Image source={require('./assets/shoppingBag.png')} style={styles.icon} />
+          </TouchableOpacity>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search"
+            value={searchQuery}
+            onChangeText={handleSearchChange}
+          />
         </View>
-      </ScrollView>
+        <View style={styles.storyContainer}>
+          <Text style={styles.text}>OUR STORY</Text>
+          <Image source={require('./assets/Filter.png')} style={styles.picture} />
+          <Image source={require('./assets/Listview.png')} style={styles.picture} />
+        </View>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.itemsContainer}>
+            {filteredItems.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.itemContainer}
+                onPress={() => navigation.navigate('ProductDetail', { item })}
+              >
+                <Image source={{ uri: item.image }} style={styles.dress} />
+                <Text style={styles.itemTitle}>{item.title}</Text>
+                <Text style={styles.itemPrice}>${item.price}</Text>
+                <TouchableOpacity style={styles.addButton} onPress={() => addToCart(item)}>
+                  <Text style={styles.addButtonText}>+</Text>
+                </TouchableOpacity>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      </View>
     </View>
   );
 }
@@ -131,8 +138,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    flexDirection: 'row',
   },
-  imageContainer: {
+  mainContainer: {
+    flex: 1,
+  },
+  header: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 20,
@@ -219,4 +230,3 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 });
-
