@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity } from 'react-native';
 
 export default function Cart({ route, navigation }) {
@@ -9,6 +9,10 @@ export default function Cart({ route, navigation }) {
     setCart(updatedCart);
   };
 
+  const totalCost = useMemo(() => {
+    return cart.reduce((total, item) => total + item.price, 0);
+  }, [cart]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Cart</Text>
@@ -17,11 +21,11 @@ export default function Cart({ route, navigation }) {
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
-            <Image source={item.source} style={styles.image} />
+            <Image source={{ uri: item.image }} style={styles.image} />
             <View style={styles.detailsContainer}>
               <Text style={styles.itemTitle}>{item.title}</Text>
               <Text style={styles.itemDescription}>{item.description}</Text>
-              <Text style={styles.itemPrice}>{item.price}</Text>
+              <Text style={styles.itemPrice}>{`$${item.price.toFixed(2)}`}</Text>
               <TouchableOpacity style={styles.removeButton} onPress={() => removeFromCart(item.id)}>
                 <Text style={styles.removeButtonText}>Remove</Text>
               </TouchableOpacity>
@@ -29,6 +33,9 @@ export default function Cart({ route, navigation }) {
           </View>
         )}
       />
+      <View style={styles.totalContainer}>
+        <Text style={styles.totalText}>Total: ${totalCost.toFixed(2)}</Text>
+      </View>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>Back</Text>
       </TouchableOpacity>
@@ -81,6 +88,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
   },
+  totalContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  totalText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
   backButton: {
     backgroundColor: '#000',
     borderRadius: 5,
@@ -93,3 +108,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
