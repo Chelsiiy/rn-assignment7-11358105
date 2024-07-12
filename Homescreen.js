@@ -104,15 +104,17 @@ export default function Homescreen({ navigation, cart, setCart }) {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.itemsContainer}>
           {filteredItems.map(item => (
-            <View key={item.id} style={styles.itemContainer}>
-              <Image source={item.source} style={styles.dress} />
-              <Text style={styles.itemTitle}>{item.title}</Text>
-              <Text style={styles.itemDescription}>{item.description}</Text>
-              <Text style={styles.itemPrice}>{item.price}</Text>
-              <TouchableOpacity style={styles.addButton} onPress={() => addToCart(item)}>
-                <Text style={styles.addButtonText}>+</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity key={item.id} onPress={() => navigation.navigate('ProductDetail', { item })}>
+              <View style={styles.itemContainer}>
+                <Image source={item.source} style={styles.dress} />
+                <Text style={styles.itemTitle}>{item.title}</Text>
+                <Text style={styles.itemDescription}>{item.description}</Text>
+                <Text style={styles.itemPrice}>{item.price}</Text>
+                <TouchableOpacity style={styles.addButton} onPress={() => addToCart(item)}>
+                  <Text style={styles.addButtonText}>+</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
@@ -142,78 +144,72 @@ const styles = StyleSheet.create({
     height: 50,
     margin: 5,
     marginRight: 35,
-    marginLeft: 35,
-  },
-  searchInput: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    flex: 1,
-    marginLeft: 15,
-    marginRight: 15,
   },
   picture: {
     width: 30,
     height: 30,
-    marginLeft: 35,
-    marginRight: 35,
+    margin: 5,
+    marginRight: 20,
   },
   text: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    marginRight: 20,
-    marginLeft: 15,
+    fontSize: 24,
+    fontFamily: 'serif',
+  },
+  searchInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    paddingLeft: 10,
+    marginLeft: 10,
+    flex: 1,
   },
   scrollContainer: {
-    alignItems: 'center',
+    paddingBottom: 20,
   },
   itemsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    marginTop: 20,
+    justifyContent: 'center',
   },
   itemContainer: {
     width: '45%',
+    margin: 10,
+    backgroundColor: '#f8f8f8',
+    borderRadius: 10,
+    padding: 10,
     alignItems: 'center',
-    marginBottom: 20,
-    position: 'relative',
   },
   dress: {
     width: '100%',
-    height: 250,
-    resizeMode: 'cover',
+    height: 150,
+    borderRadius: 10,
   },
   itemTitle: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
     marginTop: 10,
+    textAlign: 'center',
   },
   itemDescription: {
-    fontSize: 16,
-    marginTop: 5,
+    fontSize: 14,
+    color: '#666',
     textAlign: 'center',
+    marginVertical: 5,
   },
   itemPrice: {
     fontSize: 16,
-    marginTop: 5,
-    fontWeight: 'bold',
+    color: '#333',
+    marginVertical: 5,
   },
   addButton: {
-    position: 'absolute',
-    right: 10,
-    bottom: 10,
     backgroundColor: '#000',
-    borderRadius: 20,
-    width: 30,
-    height: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
   },
   addButtonText: {
     color: '#fff',
-    fontSize: 20,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
