@@ -1,58 +1,34 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-export default function ProductDetail({ route, navigation }) {
-  const { item } = route.params;
+const Sidebar = ({ navigation }) => {
+  const navigateToCart = () => {
+    navigation.navigate('Cart');
+  };
 
   return (
     <View style={styles.container}>
-      <Image source={{ uri: item.image }} style={styles.image} />
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.description}>{item.description}</Text>
-      <Text style={styles.price}>${item.price}</Text>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.backButtonText}>Back</Text>
+      <TouchableOpacity style={styles.item} onPress={navigateToCart}>
+        <Text>Cart</Text>
       </TouchableOpacity>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 20,
+    paddingTop: 50,
     alignItems: 'center',
   },
-  image: {
-    width: '100%',
-    height: 300,
-    resizeMode: 'contain',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: 20,
-  },
-  description: {
-    fontSize: 16,
-    marginTop: 10,
-    textAlign: 'center',
-  },
-  price: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 10,
-    color: 'orange',
-  },
-  backButton: {
-    backgroundColor: '#000',
-    borderRadius: 5,
+  item: {
     padding: 10,
-    marginTop: 20,
-  },
-  backButtonText: {
-    color: '#fff',
-    fontSize: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    width: '100%',
+    alignItems: 'center',
   },
 });
+
+export default Sidebar;
