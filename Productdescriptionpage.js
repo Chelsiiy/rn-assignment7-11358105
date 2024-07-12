@@ -6,10 +6,10 @@ export default function ProductDetail({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <Image source={item.source} style={styles.image} />
+      <Image source={{ uri: item.image }} style={styles.image} />
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.description}>{item.description}</Text>
-      <Text style={styles.price}>{item.price}</Text>
+      <Text style={styles.price}>${item.price}</Text>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>Back</Text>
       </TouchableOpacity>
@@ -56,5 +56,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-
