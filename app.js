@@ -1,21 +1,33 @@
-
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import Homescreen from './Homescreen';
-import ProductDetail from './Productdetails';
-import Cart from './Cart';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const Stack = createStackNavigator();
-
-export default function App() {
+const Sidebar = ({ navigation }) => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Homescreen">
-        <Stack.Screen name="Homescreen" component={Homescreen} />
-        <Stack.Screen name="ProductDetail" component={ProductDetail} />
-    
-      </Stack.Navigator>
-    </NavigationContainer>
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('Cart')}>
+        <Text>Cart</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('ProductDetail')}>
+        <Text>Product Detail</Text>
+      </TouchableOpacity>
+    </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingTop: 50,
+    alignItems: 'center',
+  },
+  item: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    width: '100%',
+    alignItems: 'center',
+  },
+});
+
+export default Sidebar;
