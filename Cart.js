@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 const Sidebar = ({ navigation }) => {
   const navigateToCart = () => {
     navigation.navigate('Cart');
+    navigation.navigate('Product Details');
   };
 
   return (
@@ -28,6 +29,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ccc',
     width: '100%',
     alignItems: 'center',
+    bordertop:50,
   },
 });
 
